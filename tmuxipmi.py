@@ -1,0 +1,27 @@
+#! /bin/env python
+from osnode import OSNode
+import sys
+import os
+
+if __name__ == "__main__":
+    if len(sys.argv) == 2:
+        sess_name = sys.argv[1]
+        os.popen('tmux kill-session -t %s' % sess_name) 
+        servers = sorted(OSNode.filter_by_server_name(sess_name, '.driver_info.ipmi_address'), key=lambda d: d.get('key'))
+        for index, item in enumerate(servers):
+            server_name, node_ip = item.get('key'), item.get('value')
+            print server_name
+            for fn in ['deactivate', 'activate']:
+                ipmi_cmd = "ipmitool -I lanplus -H %s -U root -P calvin sol %s" % (node_ip, fn)
+                if fn == 'activate':
+                    print(ipmi_cmd)
+                    if index == 0:
+                        os.popen('tmux new-session -d -s %s -n %s "%s"' % (sess_name, server_name, ipmi_cmd))
+                    else:
+                        os.popen('tmux new-window -d -t %s:%s -n %s "%s"' % (sess_name, index+1, server_name, ipmi_cmd))
+                else:
+                    os.popen(ipmi_cmd)
+        os.popen('tmux attach-session -t %s' % sess_name) 
+    else:
+        print("Usage example:")
+        print("    $ tmuxipmi.py openhpc")
