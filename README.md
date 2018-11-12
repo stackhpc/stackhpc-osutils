@@ -1,6 +1,8 @@
 # Various OpenStack tools
 
-## Gather information related to baremetal nodes using server name in a json-esque manner
+All utilities require OpenStack credentials present as environment variables.
+
+## Gather baremetal nodes facts using regexable server name
 
     $ ./osnode.py openhpc .driver_info.[]
     $ ./osnode.py openhpc .driver_info.ipmi_address | jq
