@@ -24,4 +24,4 @@ if __name__ == "__main__":
         os.popen('tmux attach-session -t %s' % sess_name) 
     else:
         print("Usage example:")
-        print("    $ tmuxipmi.py openhpc")
+        print("    $ tmuxipmi openhpc")

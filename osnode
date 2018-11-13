@@ -10,6 +10,6 @@ if __name__ == "__main__":
         ))
     else:
         print("Usage examples:")
-        print("    $ osnode.py openhpc .driver_info.ipmi_address | jq")
-        print("    $ osnode.py openhpc .driver_info.[] | jq")
+        print("    $ osnode openhpc .driver_info.ipmi_address | jq")
+        print("    $ osnode openhpc .driver_info.[] | jq")
         sys.exit(1)
