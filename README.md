@@ -2,6 +2,8 @@
 
 All utilities require OpenStack credentials present as environment variables.
 
+NOTE: ensure that your environment meets python dependencies enlisted in `requirements.txt`.
+
 ## Gather baremetal nodes facts using regexable server name
 
     $ ./osnode.py openhpc .driver_info.[]
@@ -10,4 +12,4 @@ All utilities require OpenStack credentials present as environment variables.
 
 ## Open tmux windows that match server name keyword
 
-    $ ./tmuxipmi openhpc-compute
+    $ ./tmuxipmi.py openhpc-compute
