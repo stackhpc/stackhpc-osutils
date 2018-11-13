@@ -1,0 +1,15 @@
+#! /bin/env python
+from osutils import OSNode
+import json
+import sys
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        print(json.dumps(
+            OSNode.filter_by_server_name(name=sys.argv[1], query=sys.argv[2])
+        ))
+    else:
+        print("Usage examples:")
+        print("    $ osnode.py openhpc .driver_info.ipmi_address | jq")
+        print("    $ osnode.py openhpc .driver_info.[] | jq")
+        sys.exit(1)
