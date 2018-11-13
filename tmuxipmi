@@ -10,7 +10,7 @@ if __name__ == "__main__":
         servers = sorted(OSNode.filter_by_server_name(sess_name, '.driver_info.ipmi_address'), key=lambda d: d.get('key'))
         for index, item in enumerate(servers):
             server_name, node_ip = item.get('key'), item.get('value')
-            print server_name
+            print('Opening tmux window:', server_name)
             for fn in ['deactivate', 'activate']:
                 ipmi_cmd = "ipmitool -I lanplus -H %s -U root -P calvin sol %s" % (node_ip, fn)
                 if fn == 'activate':

@@ -39,7 +39,7 @@ Use regex to filter server names:
 ## Open tmux windows that match server name keyword
 
     $ tmuxipmi openhpc-compute
-    openhpc-compute-0
+    Opening tmux window: openhpc-compute-0
     ipmitool -I lanplus -H 10.45.253.22 -U root -P calvin sol activate
-    openhpc-compute-1
+    Opening tmux window: openhpc-compute-1
     ipmitool -I lanplus -H 10.45.253.35 -U root -P calvin sol activate
