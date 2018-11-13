@@ -4,7 +4,7 @@ All utilities require OpenStack credentials present as environment variables.
 
 ## Installation
 
-    $ pip install .
+    $ pip install git+https://github.com/stackhpc/stackhpc-osutils
 
 ## Gather baremetal nodes facts using regexable server name
 
