@@ -1,8 +1,5 @@
-#! /bin/env python
 from novaclient.client import Client as NovaClient
 import ironicclient
-import json
-import sys
 import os
 import re
 
@@ -37,14 +34,3 @@ class OSNode( object ):
                         intermediate = intermediate.get(arg, None)
                 result.append(dict(key=server.name, value=intermediate))
         return result
-
-if __name__ == "__main__":
-    if len(sys.argv) == 3:
-        print(json.dumps(
-            OSNode.filter_by_server_name(name=sys.argv[1], query=sys.argv[2])
-        ))
-    else:
-        print("Usage examples:")
-        print("    $ osnode.py openhpc .driver_info.ipmi_address | jq")
-        print("    $ osnode.py openhpc .driver_info.[] | jq")
-        sys.exit(1)
