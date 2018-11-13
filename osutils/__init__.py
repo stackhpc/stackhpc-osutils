@@ -31,6 +31,6 @@ class OSNode( object ):
                     if arg == '[]':
                         return intermediate.keys()
                     else:
-                        intermediate = intermediate.get(arg, None)
+                        intermediate = intermediate.get(arg, {})
                 result.append(dict(key=server.name, value=intermediate))
         return result
