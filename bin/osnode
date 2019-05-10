@@ -1,15 +1,26 @@
 #! /bin/env python
 from osutils import OSNode
+import argparse
 import json
 import sys
 
 if __name__ == "__main__":
-    if len(sys.argv) == 3:
-        print(json.dumps(
-            OSNode.filter_by_server_name(name=sys.argv[1], query=sys.argv[2])
-        ))
-    else:
-        print("Usage examples:")
-        print("    $ osnode openhpc '.driver_info.[]'")
-        print("    $ osnode openhpc '.driver_info.ipmi_address' | jq")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description='query ironic nodes info by nova server name')
+    parser.add_argument('pattern', metavar='pattern',
+                        help='pattern to apply to server names, e.g. openhpc-')
+    parser.add_argument('query', metavar='query',
+                        help='json query to filter results by, e.g. .driver_info.ipmi_address')
+    parser.add_argument('--all-projects', dest='all',
+                        action='store_true',
+                        help='search all projects (requires admin credentials)'
+                        )
+    parser.set_defaults(all=True)
+    args = parser.parse_args()
+
+    search_opts = {}
+    if args.all:
+        search_opts['all_tenants'] = 1
+
+    print(json.dumps(
+        OSNode.filter_by_server_name(name=args.pattern, query=args.query, search_opts=search_opts)
+    ))
