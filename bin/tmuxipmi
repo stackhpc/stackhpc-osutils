@@ -23,7 +23,7 @@ if __name__ == "__main__":
     os.popen('tmux kill-session -t %s' % sess_name)
 
     servers = sorted(
-        OSNode.filter_by_server_name(sess_name, '.driver_info.ipmi_address', search_opts=search_opts),
+        OSNode.filter_by_server_name(name=sess_name, query='.driver_info.ipmi_address', search_opts=search_opts),
         key=lambda d: d.get('key')
     )
     for index, item in enumerate(servers):
