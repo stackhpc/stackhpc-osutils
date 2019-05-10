@@ -12,7 +12,7 @@ if __name__ == "__main__":
                         action='store_true',
                         help='search all projects (requires admin credentials)'
                         )
-    parser.set_defaults(all=True)
+    parser.set_defaults(all=False)
     args = parser.parse_args()
 
     sess_name = args.pattern
