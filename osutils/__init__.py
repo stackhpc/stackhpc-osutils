@@ -18,14 +18,17 @@ class OSNode( object ):
         self.nc = NovaClient(version=2, **self.credentials)
 
     @classmethod
-    def filter_by_server_name( cls, name, query ):
+    def filter_by_server_name( cls, name, query, search_opts):
         self = cls()
-        servers = self.nc.servers.list()
+        kwargs = {}
+        if search_opts:
+            kwargs["search_opts"] = search_opts
+        servers = self.nc.servers.list(**kwargs)
         result = []
         args = query.split('.')[1:]
         pattern = re.compile(name)
         for server in servers:
-            if pattern.match(server.name): 
+            if pattern.match(server.name):
                 intermediate = self.ic.node.get_by_instance_uuid(instance_uuid=server.id).to_dict()
                 for arg in args:
                     if arg == '[]':
