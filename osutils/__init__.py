@@ -29,7 +29,10 @@ class OSNode( object ):
         pattern = re.compile(name)
         for server in servers:
             if pattern.match(server.name):
-                intermediate = self.ic.node.get_by_instance_uuid(instance_uuid=server.id).to_dict()
+                try:
+                    intermediate = self.ic.node.get_by_instance_uuid(instance_uuid=server.id).to_dict()
+                except Exception as e:
+                    intermediate = {}
                 for arg in args:
                     if arg == '[]':
                         return intermediate.keys()
