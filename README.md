@@ -10,12 +10,12 @@ All utilities require OpenStack credentials present as environment variables.
 
 Query what keys are available for retrieval:
 
-    $ osnode openhpc '.driver_info.[]'
+    $ osutils.node -p openhpc -q '.driver_info.[]'
     ["deploy_kernel", "ipmi_address", "ipmi_username", "ipmi_password", "deploy_ramdisk"]
 
 Get list of `ipmi_address` and format the output using `jq`:
 
-    $ osnode openhpc '.driver_info.ipmi_address' | jq
+    $ osutils.node -p openhpc -q '.driver_info.ipmi_address' | jq
     [
       {
         "value": "10.45.253.35",
@@ -33,12 +33,12 @@ Get list of `ipmi_address` and format the output using `jq`:
 
 Use regex to filter server names:
 
-    $ osnode 'openhpc-.*0' '.driver_info.ipmi_address'
+    $ osutils.node -p 'openhpc-.*0' -q '.driver_info.ipmi_address'
     [{"value": "10.45.253.1", "key": "openhpc-login-0"}, {"value": "10.45.253.22", "key": "openhpc-compute-0"}]
 
 ## Open tmux windows that match server name keyword
 
-    $ tmuxipmi openhpc-compute
+    $ osutils.ipmi openhpc-compute
     Opening tmux window: openhpc-compute-0
     ipmitool -I lanplus -H 10.45.253.22 -U root -P calvin sol activate
     Opening tmux window: openhpc-compute-1

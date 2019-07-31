@@ -19,7 +19,7 @@ setup(
     author_email='bharat@stackhpc.com',
     packages=['osutils', 'osutils.tests'],
     package_data={'osutils': [os.path.join('tests'), 'VERSION']},
-    scripts=['bin/osnode', 'bin/tmuxipmi'],
+    scripts=['bin/osutils.node', 'bin/osutils.ipmi'],
     url='https://github.com/stackhpc/stackhpc-osutils',
     license='Apache (see LICENSE file)',
     description='OpenStack utilities',

@@ -1,4 +1,5 @@
 from novaclient.client import Client as NovaClient
+from ironicclient.client import get_client as IronicClient
 import ironicclient
 import os
 import re
@@ -17,7 +18,7 @@ class OSNode( object ):
     )
 
     def __init__( self ):
-        self.ic = ironicclient.client.get_client(api_version=1, **self.credentials)
+        self.ic = IronicClient(api_version=1, **self.credentials)
         self.nc = NovaClient(version=2, **self.credentials)
 
     @classmethod
