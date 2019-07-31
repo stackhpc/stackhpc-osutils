@@ -9,9 +9,9 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--pattern', metavar='pattern', default='',
                         help='pattern to apply to server names, e.g. openhpc, '
                              'default is everything')
-    parser.add_argument('-q', '--query', metavar='query', default='',
+    parser.add_argument('-q', '--query', metavar='query', default='.[]',
                         help='json query to filter results by, e.g. '
-                             '.driver_info.ipmi_address, default is everything')
+                             '.driver_info.ipmi_address, defaults to all keys')
     parser.add_argument('-a', '--all-projects', dest='all',
                         action='store_true',
                         help='search all projects (requires admin credentials)'
