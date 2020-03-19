@@ -1,7 +1,7 @@
 #! /bin/env python
-from osutils import OSNode
 import argparse
 import json
+import osutils
 import sys
 
 if __name__ == "__main__":
@@ -12,17 +12,14 @@ if __name__ == "__main__":
     parser.add_argument('-q', '--query', metavar='query', default='.[]',
                         help='json query to filter results by, e.g. '
                              '.driver_info.ipmi_address, defaults to all keys')
-    parser.add_argument('-a', '--all-projects', dest='all',
+    parser.add_argument('-a', '--all-projects', dest='all-projects',
                         action='store_true',
                         help='search all projects (requires admin credentials)'
                         )
-    parser.set_defaults(all=False)
+    parser.set_defaults(all_projects=False)
     args = parser.parse_args()
+    kwargs = dict(pattern=args.pattern,
+                  query=args.query,
+                  all_projects=args.all_projects)
 
-    search_opts = {}
-    if args.all:
-        search_opts['all_tenants'] = 1
-
-    print(json.dumps(
-        OSNode.filter_by_server_name(name=args.pattern, query=args.query, search_opts=search_opts)
-    ))
+    print(json.dumps(osutils.OSNode.filter_by_server_name(**kwargs)))
