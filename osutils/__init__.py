@@ -1,42 +1,35 @@
-from novaclient.client import Client as NovaClient
-from ironicclient.client import get_client as IronicClient
-import ironicclient
+import openstack
 import os
 import re
 
 class OSNode( object ):
-
-    credentials = dict(
-        region_name = os.environ.get('OS_REGION_NAME',''),
-        username = os.environ.get('OS_USERNAME',''),
-        password = os.environ.get('OS_PASSWORD',''),
-        auth_url = os.environ.get('OS_AUTH_URL',''),
-        project_id = os.environ.get('OS_PROJECT_ID',''),
-        project_name = os.environ.get('OS_PROJECT_NAME',''),
-        user_domain_name = os.environ.get('OS_USER_DOMAIN_NAME',''),
-        project_domain_name = os.environ.get('OS_PROJECT_DOMAIN_NAME','')
-    )
-
     def __init__( self ):
-        self.ic = IronicClient(api_version=1, **self.credentials)
-        self.nc = NovaClient(version=2, **self.credentials)
+        credentials = dict(
+            region_name = os.environ.get('OS_REGION_NAME',''),
+            username = os.environ.get('OS_USERNAME',''),
+            password = os.environ.get('OS_PASSWORD',''),
+            auth_url = os.environ.get('OS_AUTH_URL',''),
+            project_id = os.environ.get('OS_PROJECT_ID',''),
+            project_name = os.environ.get('OS_PROJECT_NAME',''),
+            user_domain_name = os.environ.get('OS_USER_DOMAIN_NAME',''),
+            project_domain_name = os.environ.get('OS_PROJECT_DOMAIN_NAME',''),
+        )
+        cloud = os.environ.get('OS_CLOUD','')
+        if cloud:
+            self.client = openstack.connect(cloud=cloud)
+        else:
+            self.client = openstack.connect(**credentials)
 
     @classmethod
-    def filter_by_server_name( cls, name, query, search_opts):
+    def filter_by_server_name(cls, pattern, query, all_projects):
         self = cls()
-        kwargs = {}
-        if search_opts:
-            kwargs["search_opts"] = search_opts
-        servers = self.nc.servers.list(**kwargs)
+        servers = self.client.compute.servers(all_projects=all_projects)
         result = []
         args = query.split('.')[1:]
-        pattern = re.compile(name)
+        pattern = re.compile(pattern)
         for server in servers:
             if pattern.match(server.name):
-                try:
-                    intermediate = self.ic.node.get_by_instance_uuid(instance_uuid=server.id).to_dict()
-                except Exception as e:
-                    intermediate = {}
+                intermediate = next(self.client.baremetal.nodes(instance_id=server.id, details=True), {})
                 for arg in args:
                     if arg == '[]':
                         return intermediate.keys()

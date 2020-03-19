@@ -1,8 +1,8 @@
 #! /bin/env python
-from osutils import OSNode
 import argparse
 import sys
 import os
+import osutils
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='open ironic serial consoles in tmux')
@@ -12,24 +12,21 @@ if __name__ == "__main__":
                         help='ipmi username, default is root.')
     parser.add_argument('-P', '--password', metavar='password', default='calvin',
                         help='ipmi password, default is calvin.')
-    parser.add_argument('--all-projects', dest='all',
+    parser.add_argument('--all-projects', dest='all_projects',
                         action='store_true',
                         help='search all projects (requires admin credentials)'
                         )
-    parser.set_defaults(all=False)
+    parser.set_defaults(all_projects=False)
     args = parser.parse_args()
-
-    sess_name = args.pattern
-    search_opts = {}
-    if args.all:
-        search_opts['all_tenants'] = 1
-
-    os.popen('tmux kill-session -t %s' % sess_name)
-
+    kwargs = dict(pattern=args.pattern,
+                  query='.driver_info.ipmi_address',
+                  all_projects=args.all_projects)
     servers = sorted(
-        OSNode.filter_by_server_name(name=sess_name, query='.driver_info.ipmi_address', search_opts=search_opts),
+        osutils.OSNode.filter_by_server_name(**kwargs),
         key=lambda d: d.get('key')
     )
+    sess_name = args.pattern
+    os.popen('tmux kill-session -t %s' % sess_name)
     for index, item in enumerate(servers):
         server_name, node_ip = item.get('key'), item.get('value')
         print('Opening tmux window:', server_name)
