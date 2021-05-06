@@ -1,0 +1,15 @@
+#! /bin/env python
+import argparse
+import json
+from osutils.node import Node
+import sys
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='list ironic nodes with nova server name')
+    parser.add_argument('-q', '--query', metavar='query', default='.*',
+                        help='json query to filter results by, e.g. '
+                             '.driver_info.ipmi_address, defaults to all keys')
+    args = parser.parse_args()
+    query = {q.split('.')[-1]: q for q in args.query.split(',')}
+    kwargs = dict(query=query)
+    print(json.dumps(Node.get_metadata(**kwargs)))

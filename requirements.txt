@@ -1,1 +1,1 @@
-openstacksdk>=0.43.0
+openstacksdk>=0.40.0
