@@ -1,0 +1,32 @@
+#! /bin/env python
+import argparse
+import json
+from osutils.neutron import LBaaS
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="cascade delete neutron lbaas loadbalancer"
+    )
+    parser.add_argument(
+        "lbs",
+        metavar="lbs",
+        default=[],
+        nargs="?",
+        help="list of loadbalancer names, not IDs",
+    )
+    parser.add_argument(
+        "--cascade",
+        default=False,
+        action="store_true",
+        help="whethere to cascade delete an lbaas",
+    )
+    parser.add_argument(
+        "--dry-run",
+        default=False,
+        action="store_true",
+        help="whethere to perform a dry run",
+    )
+    args = parser.parse_args()
+    lbaas = LBaaS.delete_lbs(args.lbs, args.dry_run, args.cascade)
+    if args.dry_run:
+        print("Phew, that was a dry run.")
