@@ -43,7 +43,7 @@ class LBaaS(object):
             )
             for lb in lbs:
                 lb_id = lb.get("id")
-                print("Loadbalancer ", lb_id)
+                print("Delete Loadbalancer ", lb_id)
                 if cascade:
                     listeners = lb.get("listeners")
                     pools = lb.get("pools")
@@ -61,5 +61,5 @@ class LBaaS(object):
                             if hm_id:
                                 self.neutron.delete_lbaas_healthmonitor(hm_id)
                             self.neutron.delete_lbaas_pool(pool_id)
-                if dry_run:
+                if not dry_run:
                     self.neutron.delete_loadbalancer(lb_id)
