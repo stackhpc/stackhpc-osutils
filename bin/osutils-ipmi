@@ -7,40 +7,70 @@ from osutils.node import Node
 IPMI_COMMAND_TEMPLATE = "ipmitool -I lanplus -H %s -U %s -P %s %s"
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='open ironic serial consoles in tmux')
-    parser.add_argument('pattern', metavar='pattern',
-                        help='pattern to apply to server names')
-    parser.add_argument('-u', '--username', metavar='username', default='root',
-                        help='ipmi username, default is root.')
-    parser.add_argument('-d', '--dry-run', action='store_true',
-                        help='dry run')
-    parser.add_argument('-p', '--password', metavar='password', default='calvin',
-                        help='ipmi password, default is calvin.')
-    parser.add_argument('-c', '--command', metavar='command', default='sol activate',
-                        help='ipmi command, default is `sol activate`.')
-    args = parser.parse_args()
-    kwargs = dict(pattern=args.pattern,
-                  query=dict(ipmi_address='.driver_info.ipmi_address'))
-    servers = sorted(
-        Node.filter_by_server_name(**kwargs),
-        key=lambda d: d.get('key')
+    parser = argparse.ArgumentParser(description="open ironic serial consoles in tmux")
+    parser.add_argument(
+        "pattern", metavar="pattern", help="pattern to apply to server names"
     )
+    parser.add_argument(
+        "-u",
+        "--username",
+        metavar="username",
+        default="root",
+        help="ipmi username, default is root.",
+    )
+    parser.add_argument("-d", "--dry-run", action="store_true", help="dry run")
+    parser.add_argument(
+        "-p",
+        "--password",
+        metavar="password",
+        default="calvin",
+        help="ipmi password, default is calvin.",
+    )
+    parser.add_argument(
+        "-c",
+        "--command",
+        metavar="command",
+        default="sol activate",
+        help="ipmi command, default is `sol activate`.",
+    )
+    args = parser.parse_args()
+    kwargs = dict(
+        pattern=args.pattern, query=dict(ipmi_address=".driver_info.ipmi_address")
+    )
+    servers = sorted(Node.filter_by_server_name(**kwargs), key=lambda d: d.get("key"))
     sess_name = args.pattern
-    os.popen('tmux kill-session -t %s' % sess_name)
+    os.popen("tmux kill-session -t %s" % sess_name)
     index = 0
     for item in servers:
-        server_name, node_ip = item.get('key'), item.get('value').get('ipmi_address')
+        server_name, node_ip = item.get("key"), item.get("value").get("ipmi_address")
         if node_ip:
-            ipmi_cmd = IPMI_COMMAND_TEMPLATE % (node_ip, args.username, args.password, args.command)
+            ipmi_cmd = IPMI_COMMAND_TEMPLATE % (
+                node_ip,
+                args.username,
+                args.password,
+                args.command,
+            )
             if args.command == "sol activate":
-                os.popen(IPMI_COMMAND_TEMPLATE % (node_ip, args.username, args.password, "sol deactivate"))
+                os.popen(
+                    IPMI_COMMAND_TEMPLATE
+                    % (node_ip, args.username, args.password, "sol deactivate")
+                )
             if index == 0:
-                print('Opening tmux session %s: %s' % (server_name, ipmi_cmd))
-                os.popen('tmux new-session -d -s %s -n %s "%s"' % (sess_name, server_name, ipmi_cmd))
+                print("Opening tmux session %s: %s" % (server_name, ipmi_cmd))
+                os.popen(
+                    'tmux new-session -d -s %s -n %s "%s"'
+                    % (sess_name, server_name, ipmi_cmd)
+                )
             else:
-                print('Opening tmux window %s: %s' % (server_name, ipmi_cmd))
-                os.popen('tmux new-window -d -t %s:%s -n %s "%s"' % (sess_name, index, server_name, ipmi_cmd))
+                print("Opening tmux window %s: %s" % (server_name, ipmi_cmd))
+                os.popen(
+                    'tmux new-window -d -t %s:%s -n %s "%s"'
+                    % (sess_name, index, server_name, ipmi_cmd)
+                )
             index += 1
         else:
-            print('Cannot open tmux window for server %s due to missing IPMI address.' % (server_name))
-    print('To attach to your session: tmux attach-session -t %s' % sess_name)
+            print(
+                "Cannot open tmux window for server %s due to missing IPMI address."
+                % (server_name)
+            )
+    print("To attach to your session: tmux attach-session -t %s" % sess_name)
